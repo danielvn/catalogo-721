@@ -181,6 +181,16 @@
         }
       }
 
+      /* Animación de carga */
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
       /* Modo oscuro */
       @media (prefers-color-scheme: dark) {
         body {
@@ -193,7 +203,13 @@
     <div class="container">
       <div class="header">
         <h1>📖 Catálogo</h1>
-        <a href="catalogo.pdf" download="catalogo.pdf" class="download-btn">
+        <a
+          href="catalogo.pdf"
+          download="catalogo.pdf"
+          class="download-btn"
+          id="downloadBtn"
+          onclick="forceDownload(event)"
+        >
           <svg
             fill="currentColor"
             viewBox="0 0 20 20"
@@ -251,6 +267,53 @@
 
         if (loading) loading.style.display = "none";
         if (errorMessage) errorMessage.classList.add("show");
+      }
+
+      // Función para forzar la descarga del PDF (especialmente útil en móviles)
+      function forceDownload(event) {
+        // Detectar si es un dispositivo móvil
+        const isMobile =
+          /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+            navigator.userAgent
+          );
+
+        // En móviles, forzar descarga usando fetch
+        if (isMobile) {
+          event.preventDefault();
+          const downloadBtn = document.getElementById("downloadBtn");
+
+          // Cambiar texto del botón para indicar que está descargando
+          const originalText = downloadBtn.innerHTML;
+          downloadBtn.innerHTML =
+            '<span style="display:inline-flex;align-items:center;gap:8px;"><svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" style="width:20px;height:20px;animation:spin 1s linear infinite;"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path></svg>Descargando...</span>';
+          downloadBtn.style.pointerEvents = "none";
+
+          // Descargar usando fetch
+          fetch("catalogo.pdf")
+            .then((response) => response.blob())
+            .then((blob) => {
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = "catalogo.pdf";
+              document.body.appendChild(a);
+              a.click();
+              window.URL.revokeObjectURL(url);
+              document.body.removeChild(a);
+
+              // Restaurar botón
+              downloadBtn.innerHTML = originalText;
+              downloadBtn.style.pointerEvents = "auto";
+            })
+            .catch((error) => {
+              console.error("Error al descargar:", error);
+              // Si falla, abrir en nueva pestaña como fallback
+              window.open("catalogo.pdf", "_blank");
+              downloadBtn.innerHTML = originalText;
+              downloadBtn.style.pointerEvents = "auto";
+            });
+        }
+        // En desktop, dejar que el navegador maneje la descarga normalmente
       }
 
       // Detectar si el navegador puede mostrar PDFs
