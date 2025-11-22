@@ -8,7 +8,8 @@ Página web estática para visualizar y descargar un catálogo en formato PDF, o
 - 🔍 **Detección automática** de navegadores in-app (funcionamiento silencioso)
 - 💾 **Múltiples estrategias de descarga** con fallback automático
 - ⚡ **Timeout inteligente** para evitar cargas infinitas (5 segundos)
-- 📖 **Visualizador de PDF integrado** con navegación por páginas
+- 📖 **Visualizador de PDF con scroll continuo** - todas las páginas visibles con scroll vertical
+- 🖱️ **Navegación natural** - haz scroll con el ratón o desliza en móvil
 - 📱 **100% responsive** para móviles, tablets y desktop
 - ✨ **Interfaz limpia y profesional** sin alertas molestas
 - 🚀 **Funciona simplemente haciendo clic** en el botón de descarga

@@ -106,57 +106,6 @@
         flex-direction: column;
       }
 
-      /* Controles de navegación del PDF */
-      .pdf-controls {
-        background: #f1e9d5;
-        padding: 12px 20px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 20px;
-        border-bottom: 1px solid #c7a681;
-        flex-shrink: 0;
-      }
-
-      .pdf-nav-btn {
-        background: linear-gradient(135deg, #c7a681 0%, #a65f3a 100%);
-        color: white;
-        border: none;
-        width: 40px;
-        height: 40px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: transform 0.2s, box-shadow 0.2s;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-      }
-
-      .pdf-nav-btn:hover:not(:disabled) {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(140, 135, 99, 0.4);
-        background: linear-gradient(135deg, #a65f3a 0%, #8c8763 100%);
-      }
-
-      .pdf-nav-btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-
-      .pdf-nav-btn svg {
-        width: 20px;
-        height: 20px;
-      }
-
-      .pdf-page-info {
-        color: #a65f3a;
-        font-weight: 600;
-        font-size: 16px;
-        min-width: 80px;
-        text-align: center;
-      }
-
       /* Visor del PDF */
       .pdf-viewer {
         flex: 1;
@@ -167,7 +116,8 @@
         flex-direction: column;
         align-items: center;
         padding: 20px;
-        gap: 20px;
+        gap: 0;
+        scroll-behavior: smooth;
       }
 
       .pdf-viewer canvas {
@@ -240,21 +190,6 @@
           min-height: 400px;
         }
 
-        .pdf-controls {
-          padding: 10px 15px;
-          gap: 15px;
-        }
-
-        .pdf-nav-btn {
-          width: 36px;
-          height: 36px;
-        }
-
-        .pdf-page-info {
-          font-size: 14px;
-          min-width: 70px;
-        }
-
         .pdf-viewer {
           padding: 10px;
         }
@@ -272,26 +207,6 @@
         .download-btn {
           font-size: 14px;
           padding: 12px 18px;
-        }
-
-        .pdf-controls {
-          padding: 8px 10px;
-          gap: 10px;
-        }
-
-        .pdf-nav-btn {
-          width: 32px;
-          height: 32px;
-        }
-
-        .pdf-nav-btn svg {
-          width: 16px;
-          height: 16px;
-        }
-
-        .pdf-page-info {
-          font-size: 13px;
-          min-width: 60px;
         }
 
         .pdf-viewer {
@@ -362,38 +277,6 @@
             para abrirlo en una nueva pestaña o descárgalo usando el botón
             superior.
           </div>
-          <!-- Controles de navegación del PDF -->
-          <div class="pdf-controls" id="pdfControls" style="display: none">
-            <button id="prevPage" class="pdf-nav-btn">
-              <svg
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                  clip-rule="evenodd"
-                ></path>
-              </svg>
-            </button>
-            <span class="pdf-page-info">
-              <span id="pageNum">1</span> / <span id="pageCount">0</span>
-            </span>
-            <button id="nextPage" class="pdf-nav-btn">
-              <svg
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                  clip-rule="evenodd"
-                ></path>
-              </svg>
-            </button>
-          </div>
           <!-- Contenedor para renderizar el PDF con PDF.js -->
           <div id="pdfViewer" class="pdf-viewer"></div>
           <!-- Fallback: iframe para cuando PDF.js no esté disponible -->
@@ -416,15 +299,11 @@
         "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
       let pdfDoc = null;
-      let pageNum = 1;
-      let pageRendering = false;
-      let pageNumPending = null;
       let scale = 1.5;
 
       const loading = document.getElementById("loading");
       const errorMessage = document.getElementById("errorMessage");
       const pdfViewer = document.getElementById("pdfViewer");
-      const pdfControls = document.getElementById("pdfControls");
 
       // Detectar navegadores in-app de redes sociales (silenciosamente)
       function isInAppBrowser() {
@@ -549,71 +428,40 @@
           });
       }
 
-      // Renderizar una página del PDF
-      function renderPage(num) {
-        pageRendering = true;
+      // Renderizar todas las páginas del PDF en secuencia (scroll continuo)
+      async function renderAllPages() {
+        pdfViewer.innerHTML = ""; // Limpiar el visor
 
-        pdfDoc.getPage(num).then(function (page) {
-          const viewport = page.getViewport({ scale: scale });
-          const canvas = document.createElement("canvas");
-          const ctx = canvas.getContext("2d");
-          canvas.height = viewport.height;
-          canvas.width = viewport.width;
+        for (let pageNumber = 1; pageNumber <= pdfDoc.numPages; pageNumber++) {
+          try {
+            const page = await pdfDoc.getPage(pageNumber);
+            const viewport = page.getViewport({ scale: scale });
 
-          const renderContext = {
-            canvasContext: ctx,
-            viewport: viewport,
-          };
+            // Crear canvas para esta página
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
 
-          const renderTask = page.render(renderContext);
-
-          renderTask.promise.then(function () {
-            pageRendering = false;
-            if (pageNumPending !== null) {
-              renderPage(pageNumPending);
-              pageNumPending = null;
+            // Estilo del canvas
+            if (pageNumber < pdfDoc.numPages) {
+              canvas.style.marginBottom = "20px"; // Espacio entre páginas
             }
 
-            // Limpiar el visor y agregar el canvas
-            pdfViewer.innerHTML = "";
+            const renderContext = {
+              canvasContext: ctx,
+              viewport: viewport,
+            };
+
+            // Renderizar la página
+            await page.render(renderContext).promise;
+
+            // Agregar el canvas al visor
             pdfViewer.appendChild(canvas);
-
-            // Actualizar controles
-            document.getElementById("pageNum").textContent = num;
-            document.getElementById("prevPage").disabled = num <= 1;
-            document.getElementById("nextPage").disabled =
-              num >= pdfDoc.numPages;
-          });
-        });
-      }
-
-      // Poner en cola la renderización de una página
-      function queueRenderPage(num) {
-        if (pageRendering) {
-          pageNumPending = num;
-        } else {
-          renderPage(num);
+          } catch (error) {
+            console.error(`Error renderizando página ${pageNumber}:`, error);
+          }
         }
-      }
-
-      // Página anterior
-      function onPrevPage() {
-        if (pageNum <= 1) {
-          return;
-        }
-        pageNum--;
-        queueRenderPage(pageNum);
-        pdfViewer.scrollTop = 0;
-      }
-
-      // Página siguiente
-      function onNextPage() {
-        if (pageNum >= pdfDoc.numPages) {
-          return;
-        }
-        pageNum++;
-        queueRenderPage(pageNum);
-        pdfViewer.scrollTop = 0;
       }
 
       // Función para usar iframe como fallback
@@ -625,7 +473,6 @@
           pdfViewer.style.display = "none";
         }
         if (loading) loading.style.display = "none";
-        if (pdfControls) pdfControls.style.display = "none";
       }
 
       // Cargar el PDF
@@ -659,25 +506,15 @@
         // En desktop con servidor web, usar PDF.js
         pdfjsLib
           .getDocument("catalogo.pdf")
-          .promise.then(function (pdfDoc_) {
+          .promise.then(async function (pdfDoc_) {
             pdfDoc = pdfDoc_;
-            document.getElementById("pageCount").textContent = pdfDoc.numPages;
 
-            // Ocultar loading y mostrar controles
+            // Ocultar loading y mostrar visor
             if (loading) loading.style.display = "none";
-            if (pdfControls) pdfControls.style.display = "flex";
             pdfViewer.style.display = "flex";
 
-            // Renderizar la primera página
-            renderPage(pageNum);
-
-            // Event listeners para controles
-            document
-              .getElementById("prevPage")
-              .addEventListener("click", onPrevPage);
-            document
-              .getElementById("nextPage")
-              .addEventListener("click", onNextPage);
+            // Renderizar todas las páginas
+            await renderAllPages();
           })
           .catch(function (error) {
             console.error(
