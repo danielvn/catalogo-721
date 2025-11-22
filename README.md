@@ -1,6 +1,17 @@
 # Catálogo PDF
 
-Página web estática para visualizar y descargar un catálogo en formato PDF.
+Página web estática para visualizar y descargar un catálogo en formato PDF, optimizada para funcionar en navegadores de redes sociales.
+
+## ✨ Características
+
+- 📱 **Compatible con todas las redes sociales**: Instagram, Facebook, TikTok, WhatsApp, Twitter, LinkedIn, Snapchat, Telegram y más
+- 🔍 **Detección automática** de navegadores in-app de redes sociales
+- 💾 **Múltiples estrategias de descarga** con fallback automático
+- ⚡ **Timeout inteligente** para evitar cargas infinitas
+- 🎯 **Instrucciones contextuales** para abrir en navegador externo
+- 📖 **Visualizador de PDF integrado** con navegación por páginas
+- 📱 **100% responsive** para móviles, tablets y desktop
+- ⚠️ **Alertas informativas** cuando se detecta un navegador in-app
 
 ## 🚀 Desplegar en GitHub Pages
 
@@ -72,3 +83,57 @@ Si necesitas actualizar el PDF:
 1. Reemplaza `catalogo.pdf` con el nuevo archivo
 2. Sube el archivo nuevo al repositorio (usando la interfaz web o Git)
 3. Espera unos minutos para que GitHub Pages actualice
+
+## 🛠️ Solución de Problemas
+
+### La descarga no funciona en Instagram/Facebook/TikTok
+
+**Solución:** Esto es normal. Los navegadores in-app de redes sociales tienen restricciones de seguridad. Cuando detectes el mensaje de alerta amarillo:
+
+1. Toca los **tres puntos (•••)** en la esquina superior de la app
+2. Selecciona **"Abrir en navegador"** o **"Abrir en Chrome/Safari"**
+3. El catálogo se abrirá en tu navegador predeterminado y podrás descargarlo
+
+### No veo el PDF, solo un mensaje de carga
+
+**Causas posibles:**
+
+- Conexión lenta a internet
+- Navegador in-app bloqueando el contenido
+- Archivo PDF muy grande
+
+**Solución:**
+
+- Abre la página en tu navegador web (Chrome, Safari, Firefox)
+- Toca el botón "Cómo abrir" para ver instrucciones específicas
+
+### El botón de descarga se queda "Descargando..."
+
+**Solución:**
+
+- La página tiene un timeout de 5 segundos
+- Si tu conexión es lenta, intenta usar el botón "Cómo abrir"
+- Abre la página directamente en un navegador web
+
+## 🔒 Compatibilidad
+
+### ✅ Navegadores Web (Compatibilidad Total)
+
+- Chrome / Edge / Brave
+- Safari
+- Firefox
+- Opera
+- Samsung Internet
+
+### ⚠️ Navegadores In-App (Funcionalidad Limitada)
+
+- Instagram (requiere "Abrir en navegador")
+- Facebook (requiere "Abrir en navegador")
+- TikTok (requiere "Abrir en navegador")
+- WhatsApp Web
+- Twitter/X
+- LinkedIn
+- Snapchat
+- Telegram
+
+**Nota:** Los navegadores in-app pueden visualizar el PDF pero pueden tener restricciones para descargarlo directamente. Por eso incluimos detección automática y alertas con instrucciones.

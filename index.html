@@ -86,6 +86,64 @@
         height: 20px;
       }
 
+      /* Alerta de navegador in-app */
+      .in-app-alert {
+        background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+        border: 2px solid #ffd93d;
+        border-radius: 12px;
+        padding: 15px 20px;
+        margin: 0;
+        display: none;
+        align-items: center;
+        gap: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .in-app-alert.show {
+        display: flex;
+      }
+
+      .in-app-alert-icon {
+        flex-shrink: 0;
+        font-size: 24px;
+      }
+
+      .in-app-alert-content {
+        flex: 1;
+      }
+
+      .in-app-alert-title {
+        color: #856404;
+        font-weight: 700;
+        font-size: 16px;
+        margin-bottom: 5px;
+      }
+
+      .in-app-alert-text {
+        color: #856404;
+        font-size: 14px;
+        line-height: 1.4;
+      }
+
+      .open-browser-btn {
+        background: linear-gradient(135deg, #ffd93d 0%, #f39c12 100%);
+        color: #333;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .open-browser-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(243, 156, 18, 0.4);
+      }
+
       .pdf-container {
         background: white;
         border-radius: 12px;
@@ -236,6 +294,25 @@
           padding: 14px 20px;
         }
 
+        .in-app-alert {
+          flex-direction: column;
+          text-align: center;
+          padding: 12px 15px;
+        }
+
+        .in-app-alert-title {
+          font-size: 15px;
+        }
+
+        .in-app-alert-text {
+          font-size: 13px;
+        }
+
+        .open-browser-btn {
+          width: 100%;
+          padding: 12px 20px;
+        }
+
         .pdf-wrapper {
           min-height: 400px;
         }
@@ -272,6 +349,27 @@
         .download-btn {
           font-size: 14px;
           padding: 12px 18px;
+        }
+
+        .in-app-alert {
+          padding: 10px 12px;
+        }
+
+        .in-app-alert-icon {
+          font-size: 20px;
+        }
+
+        .in-app-alert-title {
+          font-size: 14px;
+        }
+
+        .in-app-alert-text {
+          font-size: 12px;
+        }
+
+        .open-browser-btn {
+          font-size: 13px;
+          padding: 10px 16px;
         }
 
         .pdf-controls {
@@ -330,7 +428,8 @@
           download="catalogo.pdf"
           class="download-btn"
           id="downloadBtn"
-          onclick="forceDownload(event)"
+          target="_blank"
+          rel="noopener noreferrer"
         >
           <svg
             fill="currentColor"
@@ -345,6 +444,26 @@
           </svg>
           Descargar Catálogo
         </a>
+      </div>
+
+      <!-- Alerta para navegadores in-app de redes sociales -->
+      <div class="in-app-alert" id="inAppAlert">
+        <div class="in-app-alert-icon">⚠️</div>
+        <div class="in-app-alert-content">
+          <div class="in-app-alert-title">
+            Navegador de red social detectado
+          </div>
+          <div class="in-app-alert-text">
+            Para una mejor experiencia y poder descargar el catálogo, abre esta
+            página en tu navegador.
+          </div>
+        </div>
+        <button
+          class="open-browser-btn"
+          onclick="showOpenInBrowserInstructions()"
+        >
+          Cómo abrir
+        </button>
       </div>
 
       <div class="pdf-container">
@@ -399,9 +518,11 @@
           <iframe
             id="pdfIframe"
             class="pdf-iframe"
-            src="catalogo.pdf#toolbar=1&navpanes=0&scrollbar=1&page=1&view=FitH"
+            src="catalogo.pdf#toolbar=1&navpanes=0&scrollbar=1&page=1&view=FitH&zoom=page-fit"
             title="Catálogo PDF"
             style="display: none"
+            loading="lazy"
+            allow="fullscreen"
           ></iframe>
         </div>
       </div>
@@ -423,33 +544,175 @@
       const pdfViewer = document.getElementById("pdfViewer");
       const pdfControls = document.getElementById("pdfControls");
 
-      // Función para forzar la descarga del PDF
+      // Detectar navegadores in-app de redes sociales
+      function isInAppBrowser() {
+        const ua = navigator.userAgent || navigator.vendor || window.opera;
+
+        // Instagram
+        if (ua.indexOf("Instagram") > -1) return "Instagram";
+
+        // Facebook
+        if (
+          ua.indexOf("FBAN") > -1 ||
+          ua.indexOf("FBAV") > -1 ||
+          ua.indexOf("FB_IAB") > -1 ||
+          ua.indexOf("FB4A") > -1
+        )
+          return "Facebook";
+
+        // WhatsApp
+        if (ua.indexOf("WhatsApp") > -1) return "WhatsApp";
+
+        // TikTok
+        if (
+          ua.indexOf("musical_ly") > -1 ||
+          ua.indexOf("TikTok") > -1 ||
+          ua.indexOf("Bytedance") > -1
+        )
+          return "TikTok";
+
+        // Twitter
+        if (ua.indexOf("Twitter") > -1) return "Twitter";
+
+        // LinkedIn
+        if (ua.indexOf("LinkedInApp") > -1) return "LinkedIn";
+
+        // Snapchat
+        if (ua.indexOf("Snapchat") > -1) return "Snapchat";
+
+        // Telegram
+        if (ua.indexOf("Telegram") > -1) return "Telegram";
+
+        // Line
+        if (ua.indexOf("Line") > -1) return "Line";
+
+        return false;
+      }
+
+      // Mostrar alerta de navegador in-app
+      function showInAppAlert(appName) {
+        const alert = document.getElementById("inAppAlert");
+        if (alert && appName) {
+          const titleElement = alert.querySelector(".in-app-alert-title");
+          if (titleElement) {
+            titleElement.textContent = `Abriendo desde ${appName}`;
+          }
+          alert.classList.add("show");
+        }
+      }
+
+      // Instrucciones para abrir en navegador
+      function showOpenInBrowserInstructions() {
+        const appName = isInAppBrowser();
+        let message = "Para abrir en tu navegador:\n\n";
+
+        if (appName === "Instagram") {
+          message +=
+            "1. Toca los tres puntos (•••) en la esquina superior derecha\n";
+          message +=
+            '2. Selecciona "Abrir en navegador" o "Abrir en Chrome/Safari"';
+        } else if (appName === "Facebook") {
+          message +=
+            "1. Toca los tres puntos (•••) en la esquina superior derecha\n";
+          message += '2. Selecciona "Abrir en navegador externo"';
+        } else if (appName === "TikTok") {
+          message +=
+            "1. Toca los tres puntos (•••) en la esquina superior derecha\n";
+          message += '2. Selecciona "Abrir en navegador"';
+        } else {
+          message += "1. Busca el menú (•••) en la parte superior\n";
+          message +=
+            '2. Selecciona "Abrir en navegador" o "Abrir externamente"\n\n';
+          message +=
+            "También puedes copiar este enlace y pegarlo en tu navegador.";
+        }
+
+        alert(message);
+      }
+
+      // Función mejorada para forzar la descarga del PDF con múltiples estrategias
       function forceDownload(event) {
         event.preventDefault();
         const downloadBtn = document.getElementById("downloadBtn");
         const originalText = downloadBtn.innerHTML;
+        const inApp = isInAppBrowser();
 
+        // Cambiar texto del botón
         downloadBtn.innerHTML =
           '<span style="display:inline-flex;align-items:center;gap:8px;"><svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" style="width:20px;height:20px;animation:spin 1s linear infinite;"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path></svg>Descargando...</span>';
         downloadBtn.style.pointerEvents = "none";
 
-        fetch("catalogo.pdf")
-          .then((response) => response.blob())
+        // Estrategia 1: Navegadores in-app - método más simple
+        if (inApp) {
+          console.log("Navegador in-app detectado:", inApp);
+          setTimeout(() => {
+            // Intentar abrir directamente
+            const link = document.createElement("a");
+            link.href = "catalogo.pdf";
+            link.download = "catalogo.pdf";
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // Restaurar botón
+            setTimeout(() => {
+              downloadBtn.innerHTML = originalText;
+              downloadBtn.style.pointerEvents = "auto";
+            }, 1000);
+          }, 100);
+          return;
+        }
+
+        // Estrategia 2: Navegadores modernos - usar fetch con timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 segundos timeout
+
+        fetch("catalogo.pdf", { signal: controller.signal })
+          .then((response) => {
+            clearTimeout(timeoutId);
+            if (!response.ok) throw new Error("Network response was not ok");
+            return response.blob();
+          })
           .then((blob) => {
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
             a.download = "catalogo.pdf";
+            a.target = "_blank";
             document.body.appendChild(a);
             a.click();
-            window.URL.revokeObjectURL(url);
-            document.body.removeChild(a);
+
+            // Limpiar
+            setTimeout(() => {
+              window.URL.revokeObjectURL(url);
+              document.body.removeChild(a);
+            }, 100);
+
             downloadBtn.innerHTML = originalText;
             downloadBtn.style.pointerEvents = "auto";
           })
           .catch((error) => {
-            console.error("Error al descargar:", error);
-            window.open("catalogo.pdf", "_blank");
+            clearTimeout(timeoutId);
+            console.error("Error al descargar con fetch:", error);
+
+            // Estrategia 3: Fallback - abrir en nueva pestaña
+            try {
+              const link = document.createElement("a");
+              link.href = "catalogo.pdf";
+              link.download = "catalogo.pdf";
+              link.target = "_blank";
+              link.rel = "noopener noreferrer";
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+            } catch (e) {
+              console.error("Error en fallback:", e);
+              // Última estrategia: window.open
+              window.open("catalogo.pdf", "_blank");
+            }
+
             downloadBtn.innerHTML = originalText;
             downloadBtn.style.pointerEvents = "auto";
           });
@@ -549,8 +812,21 @@
           navigator.userAgent
         );
 
-      // En móviles o archivos locales, usar iframe directamente
-      if (isLocalFile || isMobile) {
+      // Detectar navegador in-app y mostrar alerta
+      const inAppBrowser = isInAppBrowser();
+      if (inAppBrowser) {
+        showInAppAlert(inAppBrowser);
+        console.log("Navegador in-app detectado:", inAppBrowser);
+      }
+
+      // Agregar event listener al botón de descarga
+      const downloadBtn = document.getElementById("downloadBtn");
+      if (downloadBtn) {
+        downloadBtn.addEventListener("click", forceDownload);
+      }
+
+      // En móviles, archivos locales o navegadores in-app, usar iframe directamente
+      if (isLocalFile || isMobile || inAppBrowser) {
         useFallbackIframe();
       } else {
         // En desktop con servidor web, usar PDF.js
