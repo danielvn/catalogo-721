@@ -8,8 +8,6 @@
       content="Catálogo PDF - Visualización y Descarga"
     />
     <title>Catálogo</title>
-    <!-- PDF.js Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <style>
       * {
         margin: 0;
@@ -106,34 +104,14 @@
         flex-direction: column;
       }
 
-      /* Visor del PDF */
-      .pdf-viewer {
-        flex: 1;
-        overflow-y: auto;
-        overflow-x: hidden;
-        background: #e5e5e5;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 20px;
-        gap: 0;
-        scroll-behavior: smooth;
-      }
-
-      .pdf-viewer canvas {
-        max-width: 100%;
-        height: auto !important;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        background: white;
-      }
-
-      /* Fallback iframe */
+      /* Iframe del PDF */
       .pdf-iframe {
         width: 100%;
         flex: 1;
         border: none;
         min-height: 600px;
         background: white;
+        display: block;
       }
 
       .loading {
@@ -144,20 +122,6 @@
         color: #a65f3a;
         font-size: 18px;
         font-weight: 600;
-      }
-
-      .error-message {
-        display: none;
-        background: #fee;
-        color: #c33;
-        padding: 15px;
-        border-radius: 8px;
-        margin: 20px;
-        text-align: center;
-      }
-
-      .error-message.show {
-        display: block;
       }
 
       /* Responsive adjustments */
@@ -189,10 +153,6 @@
         .pdf-wrapper {
           min-height: 400px;
         }
-
-        .pdf-viewer {
-          padding: 10px;
-        }
       }
 
       @media (max-width: 480px) {
@@ -207,10 +167,6 @@
         .download-btn {
           font-size: 14px;
           padding: 12px 18px;
-        }
-
-        .pdf-viewer {
-          padding: 5px;
         }
 
         .pdf-iframe {
@@ -266,45 +222,22 @@
       <div class="pdf-container">
         <div class="pdf-wrapper">
           <div class="loading" id="loading">Cargando catálogo...</div>
-          <div class="error-message" id="errorMessage">
-            No se pudo cargar el PDF. Por favor,
-            <a
-              href="catalogo.pdf"
-              target="_blank"
-              style="color: #a65f3a; font-weight: bold"
-              >haz clic aquí</a
-            >
-            para abrirlo en una nueva pestaña o descárgalo usando el botón
-            superior.
-          </div>
-          <!-- Contenedor para renderizar el PDF con PDF.js -->
-          <div id="pdfViewer" class="pdf-viewer"></div>
-          <!-- Fallback: iframe para cuando PDF.js no esté disponible -->
+          <!-- Visor de PDF usando iframe nativo -->
           <iframe
             id="pdfIframe"
             class="pdf-iframe"
-            src="catalogo.pdf#toolbar=1&navpanes=0&scrollbar=1&page=1&view=FitH&zoom=page-fit"
+            src="catalogo.pdf#toolbar=1&navpanes=0&scrollbar=1&view=FitH"
             title="Catálogo PDF"
-            style="display: none"
-            loading="lazy"
+            loading="eager"
             allow="fullscreen"
+            onload="document.getElementById('loading').style.display='none';"
+            onerror="document.getElementById('loading').textContent='Error al cargar. Intenta descargar el PDF usando el botón superior.';"
           ></iframe>
         </div>
       </div>
     </div>
 
     <script>
-      // Configurar PDF.js worker
-      pdfjsLib.GlobalWorkerOptions.workerSrc =
-        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-
-      let pdfDoc = null;
-      let scale = 1.5;
-
-      const loading = document.getElementById("loading");
-      const errorMessage = document.getElementById("errorMessage");
-      const pdfViewer = document.getElementById("pdfViewer");
-
       // Detectar navegadores in-app de redes sociales (silenciosamente)
       function isInAppBrowser() {
         const ua = navigator.userAgent || navigator.vendor || window.opera;
@@ -428,101 +361,10 @@
           });
       }
 
-      // Renderizar todas las páginas del PDF en secuencia (scroll continuo)
-      async function renderAllPages() {
-        pdfViewer.innerHTML = ""; // Limpiar el visor
-
-        for (let pageNumber = 1; pageNumber <= pdfDoc.numPages; pageNumber++) {
-          try {
-            const page = await pdfDoc.getPage(pageNumber);
-            const viewport = page.getViewport({ scale: scale });
-
-            // Crear canvas para esta página
-            const canvas = document.createElement("canvas");
-            const ctx = canvas.getContext("2d");
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
-
-            // Estilo del canvas
-            if (pageNumber < pdfDoc.numPages) {
-              canvas.style.marginBottom = "20px"; // Espacio entre páginas
-            }
-
-            const renderContext = {
-              canvasContext: ctx,
-              viewport: viewport,
-            };
-
-            // Renderizar la página
-            await page.render(renderContext).promise;
-
-            // Agregar el canvas al visor
-            pdfViewer.appendChild(canvas);
-          } catch (error) {
-            console.error(`Error renderizando página ${pageNumber}:`, error);
-          }
-        }
-      }
-
-      // Función para usar iframe como fallback
-      function useFallbackIframe() {
-        console.log("Usando iframe como fallback");
-        const pdfIframe = document.getElementById("pdfIframe");
-        if (pdfIframe) {
-          pdfIframe.style.display = "block";
-          pdfViewer.style.display = "none";
-        }
-        if (loading) loading.style.display = "none";
-      }
-
-      // Cargar el PDF
-      // Ajustar escala en móviles
-      if (window.innerWidth <= 768) {
-        scale = 1.0;
-      }
-
-      // Detectar si es un entorno local (file://)
-      const isLocalFile = window.location.protocol === "file:";
-
-      // Detectar dispositivos móviles
-      const isMobile =
-        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-          navigator.userAgent
-        );
-
-      // Detectar navegador in-app (sin alertas visibles)
-      const inAppBrowser = isInAppBrowser();
-
       // Agregar event listener al botón de descarga
       const downloadBtn = document.getElementById("downloadBtn");
       if (downloadBtn) {
         downloadBtn.addEventListener("click", forceDownload);
-      }
-
-      // En móviles, archivos locales o navegadores in-app, usar iframe directamente
-      if (isLocalFile || isMobile || inAppBrowser) {
-        useFallbackIframe();
-      } else {
-        // En desktop con servidor web, usar PDF.js
-        pdfjsLib
-          .getDocument("catalogo.pdf")
-          .promise.then(async function (pdfDoc_) {
-            pdfDoc = pdfDoc_;
-
-            // Ocultar loading y mostrar visor
-            if (loading) loading.style.display = "none";
-            pdfViewer.style.display = "flex";
-
-            // Renderizar todas las páginas
-            await renderAllPages();
-          })
-          .catch(function (error) {
-            console.error(
-              "Error al cargar PDF con PDF.js, usando iframe:",
-              error
-            );
-            useFallbackIframe();
-          });
       }
     </script>
   </body>

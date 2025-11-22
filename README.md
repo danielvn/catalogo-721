@@ -8,11 +8,12 @@ Página web estática para visualizar y descargar un catálogo en formato PDF, o
 - 🔍 **Detección automática** de navegadores in-app (funcionamiento silencioso)
 - 💾 **Múltiples estrategias de descarga** con fallback automático
 - ⚡ **Timeout inteligente** para evitar cargas infinitas (5 segundos)
-- 📖 **Visualizador de PDF con scroll continuo** - todas las páginas visibles con scroll vertical
-- 🖱️ **Navegación natural** - haz scroll con el ratón o desliza en móvil
+- 📖 **Visualizador nativo del navegador** - usa el visor PDF integrado del dispositivo
+- 🖱️ **Navegación natural con scroll** - scroll vertical fluido en todos los dispositivos
 - 📱 **100% responsive** para móviles, tablets y desktop
 - ✨ **Interfaz limpia y profesional** sin alertas molestas
 - 🚀 **Funciona simplemente haciendo clic** en el botón de descarga
+- ⚡ **Ligero y rápido** - sin librerías externas pesadas
 
 ## 🚀 Desplegar en GitHub Pages
 
@@ -106,12 +107,13 @@ Si necesitas actualizar el PDF:
 
 - Conexión lenta a internet
 - Archivo PDF grande
+- Navegador bloqueando el iframe
 
 **Solución:**
 
 - Espera unos segundos, el PDF se cargará automáticamente
-- Si persiste, abre la página en tu navegador web (Chrome, Safari, Firefox)
 - Recarga la página
+- Si persiste, haz clic en el botón de descarga para abrir el PDF directamente
 
 ### El botón de descarga se queda "Descargando..."
 
