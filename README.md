@@ -5,13 +5,13 @@ Página web estática para visualizar y descargar un catálogo en formato PDF, o
 ## ✨ Características
 
 - 📱 **Compatible con todas las redes sociales**: Instagram, Facebook, TikTok, WhatsApp, Twitter, LinkedIn, Snapchat, Telegram y más
-- 🔍 **Detección automática** de navegadores in-app de redes sociales
+- 🔍 **Detección automática** de navegadores in-app (funcionamiento silencioso)
 - 💾 **Múltiples estrategias de descarga** con fallback automático
-- ⚡ **Timeout inteligente** para evitar cargas infinitas
-- 🎯 **Instrucciones contextuales** para abrir en navegador externo
+- ⚡ **Timeout inteligente** para evitar cargas infinitas (5 segundos)
 - 📖 **Visualizador de PDF integrado** con navegación por páginas
 - 📱 **100% responsive** para móviles, tablets y desktop
-- ⚠️ **Alertas informativas** cuando se detecta un navegador in-app
+- ✨ **Interfaz limpia y profesional** sin alertas molestas
+- 🚀 **Funciona simplemente haciendo clic** en el botón de descarga
 
 ## 🚀 Desplegar en GitHub Pages
 
@@ -88,32 +88,37 @@ Si necesitas actualizar el PDF:
 
 ### La descarga no funciona en Instagram/Facebook/TikTok
 
-**Solución:** Esto es normal. Los navegadores in-app de redes sociales tienen restricciones de seguridad. Cuando detectes el mensaje de alerta amarillo:
+**Es normal:** Los navegadores in-app de redes sociales tienen restricciones de seguridad. La página está optimizada para funcionar en estos entornos.
 
-1. Toca los **tres puntos (•••)** en la esquina superior de la app
-2. Selecciona **"Abrir en navegador"** o **"Abrir en Chrome/Safari"**
-3. El catálogo se abrirá en tu navegador predeterminado y podrás descargarlo
+**¿Qué hacer?**
+
+1. Simplemente **toca el botón de descarga**
+2. En algunos casos, el PDF se abrirá en una nueva pestaña dentro de la app
+3. Si quieres descargarlo directamente a tu dispositivo:
+   - Toca los **tres puntos (•••)** en la esquina superior
+   - Selecciona **"Abrir en navegador"** o **"Abrir en Chrome/Safari"**
+   - Ahora el botón de descarga funcionará al 100%
 
 ### No veo el PDF, solo un mensaje de carga
 
 **Causas posibles:**
 
 - Conexión lenta a internet
-- Navegador in-app bloqueando el contenido
-- Archivo PDF muy grande
+- Archivo PDF grande
 
 **Solución:**
 
-- Abre la página en tu navegador web (Chrome, Safari, Firefox)
-- Toca el botón "Cómo abrir" para ver instrucciones específicas
+- Espera unos segundos, el PDF se cargará automáticamente
+- Si persiste, abre la página en tu navegador web (Chrome, Safari, Firefox)
+- Recarga la página
 
 ### El botón de descarga se queda "Descargando..."
 
 **Solución:**
 
-- La página tiene un timeout de 5 segundos
-- Si tu conexión es lenta, intenta usar el botón "Cómo abrir"
-- Abre la página directamente en un navegador web
+- La página tiene un timeout automático de 5 segundos
+- Si tu conexión es muy lenta, el sistema usará un método alternativo automáticamente
+- No te preocupes, el archivo se descargará de una u otra forma
 
 ## 🔒 Compatibilidad
 
@@ -125,15 +130,15 @@ Si necesitas actualizar el PDF:
 - Opera
 - Samsung Internet
 
-### ⚠️ Navegadores In-App (Funcionalidad Limitada)
+### ✅ Navegadores In-App de Redes Sociales (Optimizado)
 
-- Instagram (requiere "Abrir en navegador")
-- Facebook (requiere "Abrir en navegador")
-- TikTok (requiere "Abrir en navegador")
-- WhatsApp Web
-- Twitter/X
-- LinkedIn
-- Snapchat
-- Telegram
+- Instagram ✅
+- Facebook ✅
+- TikTok ✅
+- WhatsApp ✅
+- Twitter/X ✅
+- LinkedIn ✅
+- Snapchat ✅
+- Telegram ✅
 
-**Nota:** Los navegadores in-app pueden visualizar el PDF pero pueden tener restricciones para descargarlo directamente. Por eso incluimos detección automática y alertas con instrucciones.
+**Nota:** Los navegadores in-app pueden visualizar el PDF sin problemas. Para descargar directamente al dispositivo, es recomendable abrir en el navegador web usando el menú (•••) → "Abrir en navegador".

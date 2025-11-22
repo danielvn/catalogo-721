@@ -86,64 +86,6 @@
         height: 20px;
       }
 
-      /* Alerta de navegador in-app */
-      .in-app-alert {
-        background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
-        border: 2px solid #ffd93d;
-        border-radius: 12px;
-        padding: 15px 20px;
-        margin: 0;
-        display: none;
-        align-items: center;
-        gap: 12px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      }
-
-      .in-app-alert.show {
-        display: flex;
-      }
-
-      .in-app-alert-icon {
-        flex-shrink: 0;
-        font-size: 24px;
-      }
-
-      .in-app-alert-content {
-        flex: 1;
-      }
-
-      .in-app-alert-title {
-        color: #856404;
-        font-weight: 700;
-        font-size: 16px;
-        margin-bottom: 5px;
-      }
-
-      .in-app-alert-text {
-        color: #856404;
-        font-size: 14px;
-        line-height: 1.4;
-      }
-
-      .open-browser-btn {
-        background: linear-gradient(135deg, #ffd93d 0%, #f39c12 100%);
-        color: #333;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 700;
-        cursor: pointer;
-        white-space: nowrap;
-        transition: transform 0.2s, box-shadow 0.2s;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-      }
-
-      .open-browser-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(243, 156, 18, 0.4);
-      }
-
       .pdf-container {
         background: white;
         border-radius: 12px;
@@ -294,25 +236,6 @@
           padding: 14px 20px;
         }
 
-        .in-app-alert {
-          flex-direction: column;
-          text-align: center;
-          padding: 12px 15px;
-        }
-
-        .in-app-alert-title {
-          font-size: 15px;
-        }
-
-        .in-app-alert-text {
-          font-size: 13px;
-        }
-
-        .open-browser-btn {
-          width: 100%;
-          padding: 12px 20px;
-        }
-
         .pdf-wrapper {
           min-height: 400px;
         }
@@ -349,27 +272,6 @@
         .download-btn {
           font-size: 14px;
           padding: 12px 18px;
-        }
-
-        .in-app-alert {
-          padding: 10px 12px;
-        }
-
-        .in-app-alert-icon {
-          font-size: 20px;
-        }
-
-        .in-app-alert-title {
-          font-size: 14px;
-        }
-
-        .in-app-alert-text {
-          font-size: 12px;
-        }
-
-        .open-browser-btn {
-          font-size: 13px;
-          padding: 10px 16px;
         }
 
         .pdf-controls {
@@ -444,26 +346,6 @@
           </svg>
           Descargar Catálogo
         </a>
-      </div>
-
-      <!-- Alerta para navegadores in-app de redes sociales -->
-      <div class="in-app-alert" id="inAppAlert">
-        <div class="in-app-alert-icon">⚠️</div>
-        <div class="in-app-alert-content">
-          <div class="in-app-alert-title">
-            Navegador de red social detectado
-          </div>
-          <div class="in-app-alert-text">
-            Para una mejor experiencia y poder descargar el catálogo, abre esta
-            página en tu navegador.
-          </div>
-        </div>
-        <button
-          class="open-browser-btn"
-          onclick="showOpenInBrowserInstructions()"
-        >
-          Cómo abrir
-        </button>
       </div>
 
       <div class="pdf-container">
@@ -544,12 +426,12 @@
       const pdfViewer = document.getElementById("pdfViewer");
       const pdfControls = document.getElementById("pdfControls");
 
-      // Detectar navegadores in-app de redes sociales
+      // Detectar navegadores in-app de redes sociales (silenciosamente)
       function isInAppBrowser() {
         const ua = navigator.userAgent || navigator.vendor || window.opera;
 
         // Instagram
-        if (ua.indexOf("Instagram") > -1) return "Instagram";
+        if (ua.indexOf("Instagram") > -1) return true;
 
         // Facebook
         if (
@@ -558,10 +440,10 @@
           ua.indexOf("FB_IAB") > -1 ||
           ua.indexOf("FB4A") > -1
         )
-          return "Facebook";
+          return true;
 
         // WhatsApp
-        if (ua.indexOf("WhatsApp") > -1) return "WhatsApp";
+        if (ua.indexOf("WhatsApp") > -1) return true;
 
         // TikTok
         if (
@@ -569,68 +451,27 @@
           ua.indexOf("TikTok") > -1 ||
           ua.indexOf("Bytedance") > -1
         )
-          return "TikTok";
+          return true;
 
         // Twitter
-        if (ua.indexOf("Twitter") > -1) return "Twitter";
+        if (ua.indexOf("Twitter") > -1) return true;
 
         // LinkedIn
-        if (ua.indexOf("LinkedInApp") > -1) return "LinkedIn";
+        if (ua.indexOf("LinkedInApp") > -1) return true;
 
         // Snapchat
-        if (ua.indexOf("Snapchat") > -1) return "Snapchat";
+        if (ua.indexOf("Snapchat") > -1) return true;
 
         // Telegram
-        if (ua.indexOf("Telegram") > -1) return "Telegram";
+        if (ua.indexOf("Telegram") > -1) return true;
 
         // Line
-        if (ua.indexOf("Line") > -1) return "Line";
+        if (ua.indexOf("Line") > -1) return true;
 
         return false;
       }
 
-      // Mostrar alerta de navegador in-app
-      function showInAppAlert(appName) {
-        const alert = document.getElementById("inAppAlert");
-        if (alert && appName) {
-          const titleElement = alert.querySelector(".in-app-alert-title");
-          if (titleElement) {
-            titleElement.textContent = `Abriendo desde ${appName}`;
-          }
-          alert.classList.add("show");
-        }
-      }
-
-      // Instrucciones para abrir en navegador
-      function showOpenInBrowserInstructions() {
-        const appName = isInAppBrowser();
-        let message = "Para abrir en tu navegador:\n\n";
-
-        if (appName === "Instagram") {
-          message +=
-            "1. Toca los tres puntos (•••) en la esquina superior derecha\n";
-          message +=
-            '2. Selecciona "Abrir en navegador" o "Abrir en Chrome/Safari"';
-        } else if (appName === "Facebook") {
-          message +=
-            "1. Toca los tres puntos (•••) en la esquina superior derecha\n";
-          message += '2. Selecciona "Abrir en navegador externo"';
-        } else if (appName === "TikTok") {
-          message +=
-            "1. Toca los tres puntos (•••) en la esquina superior derecha\n";
-          message += '2. Selecciona "Abrir en navegador"';
-        } else {
-          message += "1. Busca el menú (•••) en la parte superior\n";
-          message +=
-            '2. Selecciona "Abrir en navegador" o "Abrir externamente"\n\n';
-          message +=
-            "También puedes copiar este enlace y pegarlo en tu navegador.";
-        }
-
-        alert(message);
-      }
-
-      // Función mejorada para forzar la descarga del PDF con múltiples estrategias
+      // Función mejorada para descargar el PDF con múltiples estrategias
       function forceDownload(event) {
         event.preventDefault();
         const downloadBtn = document.getElementById("downloadBtn");
@@ -642,11 +483,9 @@
           '<span style="display:inline-flex;align-items:center;gap:8px;"><svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" style="width:20px;height:20px;animation:spin 1s linear infinite;"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path></svg>Descargando...</span>';
         downloadBtn.style.pointerEvents = "none";
 
-        // Estrategia 1: Navegadores in-app - método más simple
+        // Estrategia para navegadores in-app - método directo y compatible
         if (inApp) {
-          console.log("Navegador in-app detectado:", inApp);
           setTimeout(() => {
-            // Intentar abrir directamente
             const link = document.createElement("a");
             link.href = "catalogo.pdf";
             link.download = "catalogo.pdf";
@@ -660,19 +499,19 @@
             setTimeout(() => {
               downloadBtn.innerHTML = originalText;
               downloadBtn.style.pointerEvents = "auto";
-            }, 1000);
+            }, 800);
           }, 100);
           return;
         }
 
-        // Estrategia 2: Navegadores modernos - usar fetch con timeout
+        // Estrategia para navegadores normales - usar fetch con timeout
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 segundos timeout
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
 
         fetch("catalogo.pdf", { signal: controller.signal })
           .then((response) => {
             clearTimeout(timeoutId);
-            if (!response.ok) throw new Error("Network response was not ok");
+            if (!response.ok) throw new Error("Network error");
             return response.blob();
           })
           .then((blob) => {
@@ -684,7 +523,6 @@
             document.body.appendChild(a);
             a.click();
 
-            // Limpiar
             setTimeout(() => {
               window.URL.revokeObjectURL(url);
               document.body.removeChild(a);
@@ -695,23 +533,16 @@
           })
           .catch((error) => {
             clearTimeout(timeoutId);
-            console.error("Error al descargar con fetch:", error);
 
-            // Estrategia 3: Fallback - abrir en nueva pestaña
-            try {
-              const link = document.createElement("a");
-              link.href = "catalogo.pdf";
-              link.download = "catalogo.pdf";
-              link.target = "_blank";
-              link.rel = "noopener noreferrer";
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
-            } catch (e) {
-              console.error("Error en fallback:", e);
-              // Última estrategia: window.open
-              window.open("catalogo.pdf", "_blank");
-            }
+            // Fallback - método simple
+            const link = document.createElement("a");
+            link.href = "catalogo.pdf";
+            link.download = "catalogo.pdf";
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
 
             downloadBtn.innerHTML = originalText;
             downloadBtn.style.pointerEvents = "auto";
@@ -812,12 +643,8 @@
           navigator.userAgent
         );
 
-      // Detectar navegador in-app y mostrar alerta
+      // Detectar navegador in-app (sin alertas visibles)
       const inAppBrowser = isInAppBrowser();
-      if (inAppBrowser) {
-        showInAppAlert(inAppBrowser);
-        console.log("Navegador in-app detectado:", inAppBrowser);
-      }
 
       // Agregar event listener al botón de descarga
       const downloadBtn = document.getElementById("downloadBtn");
